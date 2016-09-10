@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Personnage;
+
 
 namespace Economy
 {
@@ -16,19 +18,13 @@ namespace Economy
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        KeyboardState oldState;
-        Texture2D perso;
-        Texture2D perso2;
-        Texture2D attack;
+        KeyboardState oldState;        
         Texture2D mob;
         int angle = 0;
-        Vector2 persoPos = new Vector2(250, 250);
-        Vector2 attackPos;
         Vector2 mobPos = new Vector2(500, 250);
-        MouseState oldSourisState;
-        bool attackOrNot = false;
-        int sensPerso;
+        MouseState oldSourisState;       
         bool mobInLife = true;
+        Perso perso = new Perso();
 
 
         public Game1()
@@ -46,9 +42,9 @@ namespace Economy
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            this.perso = Content.Load<Texture2D>("perso");
-            this.perso2 = Content.Load<Texture2D>("perso2");
-            this.attack = Content.Load<Texture2D>("attack");
+            perso.perso = Content.Load<Texture2D>("perso");
+            perso.perso2 = Content.Load<Texture2D>("perso2");
+            perso.attack = Content.Load<Texture2D>("attack");
             this.mob = Content.Load<Texture2D>("mob");
         }
 
@@ -74,15 +70,15 @@ namespace Economy
             {
                 spawn(this.mob, new Vector2(500, 250), 0, 0.5f);
             }
-            if (sensPerso == 1)
+            if (perso.getSens() == 1)
             {
-                spawn(this.perso, persoPos, angle, 1f);
-                attackPos = new Vector2(persoPos.X + 50, persoPos.Y);
+                spawn(perso.perso, perso.getPersoPos(), angle, 1f);
+                perso.moveAttack(new Vector2(perso.getPersoPos().X + 50, perso.getPersoPos().Y));
             }
-            else if (sensPerso == 0)
+            else if (perso.getSens() == 0)
             {
-                spawn(this.perso2, persoPos, angle, 1f);
-                attackPos = new Vector2(persoPos.X - 50, persoPos.Y);
+                spawn(perso.perso2, perso.getPersoPos(), angle, 1f);
+                perso.moveAttack(new Vector2(perso.getPersoPos().X - 50, perso.getPersoPos().Y));
             }
             
             /*   else if (sensPerso == 2)
@@ -93,14 +89,14 @@ namespace Economy
                {
 
                }*/
-            if (attackOrNot)
+            if (perso.getAttOrNot())
             {
-                spawn(attack, attackPos, 0, 1f);
-                if (attack.Bounds.Intersects(mob.Bounds))
+                spawn(perso.attack, perso.getAttPos(), 0, 1f);
+                if (perso.attack.Bounds.Intersects(mob.Bounds))
                 {
                     mobInLife = false;
                 }
-                attackOrNot = false;
+                perso.attacking(false);
             }
             spriteBatch.End();
             base.Draw(gameTime);
@@ -120,14 +116,14 @@ namespace Economy
             }*/
             if (newState.IsKeyDown(Keys.Q))
             {
-                persoPos.X--;
-                sensPerso = 0;
+                perso.movePerso(new Vector2(perso.getPersoPos().X - 1, perso.getPersoPos().Y));
+                perso.changeSens(0);
                 angle = 0;
             }
             if (newState.IsKeyDown(Keys.D))
             {
-                persoPos.X++;
-                sensPerso = 1;
+                perso.movePerso(new Vector2(perso.getPersoPos().X + 1, perso.getPersoPos().Y));
+                perso.changeSens(1);
                 angle = 0;
                 
             }
@@ -135,7 +131,7 @@ namespace Economy
 
             if (sourisState.LeftButton == ButtonState.Pressed && oldSourisState.LeftButton != ButtonState.Pressed)
             {
-                attackOrNot = true;
+                perso.attacking(true);
             }
             oldSourisState = sourisState;
         }
@@ -147,7 +143,7 @@ namespace Economy
                   null,                                       // Zone de l'image à afficher
                   Color.White,                                // Teinte
                   MathHelper.ToRadians(angle),         // Rotation (en rad)
-                  new Vector2(perso.Width / 2, perso.Height / 2),  // Origine
+                  new Vector2(perso.perso.Width / 2, perso.perso.Height / 2),  // Origine
                   size,                                       // Echelle
                   SpriteEffects.None,                        // Effet
                   0);                                         // Profondeur
