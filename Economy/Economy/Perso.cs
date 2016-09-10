@@ -23,6 +23,10 @@ namespace Personnage
         int sensPerso;
         int pv;
         Rectangle attackHitBox = new Rectangle();
+        bool jumping = false;
+        public bool walking = false;
+        public bool canJump = true;
+
         public Perso()
         {
             
@@ -88,6 +92,16 @@ namespace Personnage
         public Rectangle getAttackHitBox()
         {
             return attackHitBox;
-        }       
+        }  
+//Savoir si le perso saute
+        public bool isJumpingOrNot()
+        {
+            return jumping;
+        } 
+//Faire le pero sauter ou pas
+        public void jump(bool trueorfalse)
+        {
+            jumping = trueorfalse;
+        }
     }
 }

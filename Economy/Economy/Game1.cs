@@ -25,7 +25,6 @@ namespace Economy
         Perso perso = new Perso();
         mob Mob = new mob();
 
-
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -65,7 +64,34 @@ namespace Economy
         {
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
-            if(Mob.mobInLifeOrNot()) // Si le mob est en vie
+
+            if (perso.isJumpingOrNot() == true)
+            {
+                perso.movePerso(new Vector2(perso.getPersoPos().X, perso.getPersoPos().Y - 4));
+            }
+
+            if (!perso.walking && !perso.isJumpingOrNot())
+            {
+                perso.movePerso(new Vector2(perso.getPersoPos().X, perso.getPersoPos().Y + 4));
+            }
+
+            if (perso.getPersoPos().Y < 150)
+            {
+                perso.jump(false); 
+            }
+
+            if (perso.getPersoPos().Y >= 250)
+            {
+                perso.walking = true;
+                perso.canJump = true;
+            }
+
+            if (perso.getPersoPos().Y < 250)
+            {
+                perso.walking = false;
+            }
+
+            if (Mob.mobInLifeOrNot()) // Si le mob est en vie
             {
                 spawn(Mob.mobText, Mob.getMobPos(), 0, 0.5f); //One le spawn
                 Mob.createMobHitBox(new Rectangle((int)Mob.getMobPos().X, (int)Mob.getMobPos().Y, 64, 64));//Et on définit sa hitbox
@@ -126,18 +152,25 @@ namespace Economy
             }*/
             if (newState.IsKeyDown(Keys.Q))
             {
-                perso.movePerso(new Vector2(perso.getPersoPos().X - 1, perso.getPersoPos().Y));
+                perso.movePerso(new Vector2(perso.getPersoPos().X - 2, perso.getPersoPos().Y));
                 perso.changeSens(0);
                 angle = 0;
             }
-            if (newState.IsKeyDown(Keys.D))
+           else  if (newState.IsKeyDown(Keys.D))
             {
-                perso.movePerso(new Vector2(perso.getPersoPos().X + 1, perso.getPersoPos().Y));
+                perso.movePerso(new Vector2(perso.getPersoPos().X + 2, perso.getPersoPos().Y));
                 perso.changeSens(1);
                 angle = 0;
-                
             }
-            oldState = newState;
+           
+            if (newState.IsKeyDown(Keys.Z) && !oldState.IsKeyDown(Keys.Z) && perso.canJump == true)
+            {
+                perso.jump(true);
+                perso.canJump = false;
+                perso.walking = false;
+            }
+          
+                oldState = newState;
 
             if (sourisState.LeftButton == ButtonState.Pressed && oldSourisState.LeftButton != ButtonState.Pressed)
             {
