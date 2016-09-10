@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Personnage;
+using Mob;
 
 
 namespace Economy
@@ -19,12 +20,10 @@ namespace Economy
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         KeyboardState oldState;        
-        Texture2D mob;
         int angle = 0;
-        Vector2 mobPos = new Vector2(500, 250);
         MouseState oldSourisState;       
-        bool mobInLife = true;
         Perso perso = new Perso();
+        mob Mob = new mob();
 
 
         public Game1()
@@ -45,7 +44,7 @@ namespace Economy
             perso.perso = Content.Load<Texture2D>("perso");
             perso.perso2 = Content.Load<Texture2D>("perso2");
             perso.attack = Content.Load<Texture2D>("attack");
-            this.mob = Content.Load<Texture2D>("mob");
+            Mob.mobText = Content.Load<Texture2D>("mob");
         }
 
 
@@ -66,9 +65,9 @@ namespace Economy
         {
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
-            if(mobInLife)
+            if(Mob.mobInLifeOrNot())
             {
-                spawn(this.mob, new Vector2(500, 250), 0, 0.5f);
+                spawn(Mob.mobText, new Vector2(500, 250), 0, 0.5f);
             }
             if (perso.getSens() == 1)
             {
@@ -92,9 +91,9 @@ namespace Economy
             if (perso.getAttOrNot())
             {
                 spawn(perso.attack, perso.getAttPos(), 0, 1f);
-                if (perso.attack.Bounds.Intersects(mob.Bounds))
+                if (perso.attack.Bounds.Intersects(Mob.mobText.Bounds))
                 {
-                    mobInLife = false;
+                    Mob.killMob();
                 }
                 perso.attacking(false);
             }
