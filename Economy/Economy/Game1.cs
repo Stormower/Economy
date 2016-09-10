@@ -65,19 +65,20 @@ namespace Economy
         {
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
-            if(Mob.mobInLifeOrNot())
+            if(Mob.mobInLifeOrNot()) // Si le mob est en vie
             {
-                spawn(Mob.mobText, new Vector2(500, 250), 0, 0.5f);
+                spawn(Mob.mobText, Mob.getMobPos(), 0, 0.5f); //One le spawn
+                Mob.createMobHitBox(new Rectangle((int)Mob.getMobPos().X, (int)Mob.getMobPos().Y, 64, 64));//Et on définit sa hitbox
             }
-            if (perso.getSens() == 1)
+            if (perso.getSens() == 1) //Si les perso est dans le sens 1
             {
-                spawn(perso.perso, perso.getPersoPos(), angle, 1f);
-                perso.moveAttack(new Vector2(perso.getPersoPos().X + 50, perso.getPersoPos().Y));
+                spawn(perso.perso, perso.getPersoPos(), angle, 1f); // on affiche le perso
+                perso.moveAttack(new Vector2(perso.getPersoPos().X + 50, perso.getPersoPos().Y)); //et on positionne l'endroit où apparaîtra son attaque si il attaque
             }
-            else if (perso.getSens() == 0)
+            else if (perso.getSens() == 0) //Si il est dans le sens 0
             {
-                spawn(perso.perso2, perso.getPersoPos(), angle, 1f);
-                perso.moveAttack(new Vector2(perso.getPersoPos().X - 50, perso.getPersoPos().Y));
+                spawn(perso.perso2, perso.getPersoPos(), angle, 1f); //On affiche le perso2
+                perso.moveAttack(new Vector2(perso.getPersoPos().X - 50, perso.getPersoPos().Y)); //idem
             }
             
             /*   else if (sensPerso == 2)
@@ -87,18 +88,28 @@ namespace Economy
                else if (sensPerso == 3)
                {
 
-               }*/
-            if (perso.getAttOrNot())
+               }*/ //Au début on voulait 2 directions mais une ça ira pour le début
+            if (perso.getAttOrNot()) //Si le perso attaque
             {
-                spawn(perso.attack, perso.getAttPos(), 0, 1f);
-                if (perso.attack.Bounds.Intersects(Mob.mobText.Bounds))
+                spawn(perso.attack, perso.getAttPos(), 0, 1f); //On spawn l'attaque du perso
+                perso.createAttackHitBox(new Rectangle((int)perso.getPersoPos().X, (int)perso.getPersoPos().Y, 64, 64)); // On crée sa hitbox
+                if (perso.getAttackHitBox().Intersects(Mob.getMobHitBox())) //Si elle touche le mob
                 {
-                    Mob.killMob();
+                    Mob.killMob(false); // On tue le mob
+                    
                 }
-                perso.attacking(false);
+                perso.attacking(false); // Le perso n'attaque plus
             }
+            Mob.moveMob(new Vector2(Mob.getMobPos().X - 1, Mob.getMobPos().Y)); //On déplace le mob d'un pixel à chaque refresh
             spriteBatch.End();
             base.Draw(gameTime);
+
+
+            if (!Mob.mobInLifeOrNot()) // Si le Mob est mort
+            {
+                Mob.moveMob(new Vector2(700, 250)); //Changer sa position
+                Mob.killMob(true);  //Le réssusiter
+            }
         }
 
         private void uInput()

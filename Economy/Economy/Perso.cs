@@ -22,6 +22,7 @@ namespace Personnage
         bool attackOrNot = false;
         int sensPerso;
         int pv;
+        Rectangle attackHitBox = new Rectangle();
         public Perso()
         {
             
@@ -78,7 +79,15 @@ namespace Personnage
         {
             attackOrNot = attOrNot;
         }
-
-       
+//Définir la hitbox de l'attaque
+        public void createAttackHitBox(Rectangle rectangle)
+        {
+            attackHitBox = rectangle;
+        }
+//Récupérer la hitbox de l'attaque
+        public Rectangle getAttackHitBox()
+        {
+            return attackHitBox;
+        }       
     }
 }

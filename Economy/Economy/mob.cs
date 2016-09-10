@@ -17,6 +17,10 @@ namespace Mob
         public Texture2D mobText;
         Vector2 mobPos = new Vector2(500, 250);
         bool mobInLife = true;
+        Rectangle mobHitBox = new Rectangle();
+       
+
+
         public mob()
         {
         }
@@ -26,9 +30,29 @@ namespace Mob
             return mobInLife;
         }
 //Tuer le mob
-        public void killMob()
+        public void killMob(bool inLife)
         {
-            mobInLife = false;
+            mobInLife = inLife;
+        }
+//Définir la hitbox du mob
+        public void createMobHitBox(Rectangle rectangle)
+        {
+            mobHitBox = rectangle;
+        }
+//Récupérer la hitbox du mob
+        public Rectangle getMobHitBox()
+        {
+            return mobHitBox;
+        }
+//Récupérer sa position
+        public Vector2 getMobPos()
+        {
+            return mobPos;
+        }
+//Définir une nouvelle position pour le mob
+        public void moveMob(Vector2 newPos)
+        {
+            mobPos = newPos;
         }
     }
 }
