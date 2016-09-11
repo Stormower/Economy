@@ -17,7 +17,7 @@ namespace Maps
     {
 
         public Texture2D texture;
-        public Rectangle hititBox;
+        public Rectangle hitBox;
 
         public Map()
         {
