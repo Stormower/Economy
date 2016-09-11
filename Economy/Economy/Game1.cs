@@ -94,7 +94,7 @@ namespace Economy
                     perso.walking = false;
                 }
 
-                if (maps[i].hitBox.Intersects(perso.getPersoHitBox()) && perso.getPersoPos().Y > limiteSaut)
+                if (maps[i].hitBox.Intersects(perso.getPersoHitBox()))
                 {
                     // Si le personnage touche la map ET que sa position est plus basse que sa limite de saut c'est qu'il a touché le sol ALORS
                     // Il marche
@@ -103,18 +103,18 @@ namespace Economy
                     perso.canJump = true;
                 }
 
-                if (perso.isJumpingOrNot() == true)
+                if (perso.isJumpingOrNot())
                 {
                     // Si le perso est en train de sauter
                     // Il monte
-                    perso.movePerso(new Vector2(perso.getPersoPos().X, perso.getPersoPos().Y - 4));
+                    perso.movePerso(new Vector2(perso.getPersoPos().X, perso.getPersoPos().Y -  4 / maps.Length));
                 }
 
                 if (!perso.walking && !perso.isJumpingOrNot())
                 {
                     // Si le perso ne marche pas et ne saute pas non plus 
                     // il tombe
-                    perso.movePerso(new Vector2(perso.getPersoPos().X, perso.getPersoPos().Y + 4));
+                    perso.movePerso(new Vector2(perso.getPersoPos().X, perso.getPersoPos().Y +  4 / maps.Length));
                 }
 
                 if (perso.getPersoPos().Y <= limiteSaut || maps[i].hitBox.Intersects(perso.getPersoHitBox()))
@@ -138,9 +138,9 @@ namespace Economy
             spawn(personnage, perso.getPersoPos(), 0, 1f); //On affiche le personnage
 
             spawn(maps[0].texture, new Vector2(150, 400), 0, 1f);                                                   // On affiche chaque carré de map
-            maps[0].hitBox = new Rectangle((int)perso.getPersoPos().X, (int)perso.getPersoPos().Y, 64, 64);       // Et on définit leur hitbox
+            maps[0].hitBox = new Rectangle(150, 400, 64, 64);       // Et on définit leur hitbox
             spawn(maps[1].texture, new Vector2(300, 400), 0, 1f);                                                   // On affiche chaque carré de map
-            maps[1].hitBox = new Rectangle((int)perso.getPersoPos().X, (int)perso.getPersoPos().Y, 64, 64);       // Et on définit leur hitbox
+            maps[1].hitBox = new Rectangle(300, 400, 64, 64);       // Et on définit leur hitbox
 
 
             if (perso.getSens() == 1) //Si le perso est dans le sens 1
