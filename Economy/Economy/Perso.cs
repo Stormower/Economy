@@ -26,7 +26,7 @@ namespace Personnage
         Rectangle persoHitBox = new Rectangle();
         bool jumping = false;
         public bool walking = false;
-        public bool canJump = true;
+        public bool canJump = false;
 
         public Perso()
         {

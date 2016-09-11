@@ -28,6 +28,7 @@ namespace Economy
         Perso perso = new Perso();
         mob[] Mob = new mob[2];
         Map[] maps = new Map[2];
+        bool b = true;
 
    //     int sol = 250;
         float limiteSaut;
@@ -94,27 +95,30 @@ namespace Economy
                     perso.walking = false;
                 }
 
-                if (maps[i].hitBox.Intersects(perso.getPersoHitBox()))
+
+
+                if (!perso.walking && !perso.isJumpingOrNot())
+                {
+                    // Si le perso ne marche pas et ne saute pas non plus 
+                    // il tombe
+                    b = true;                                        
+                }
+                if (perso.isJumpingOrNot())
+                {
+                    // Si le perso est en train de sauter
+                    // Il monte
+                    perso.movePerso(new Vector2(perso.getPersoPos().X, perso.getPersoPos().Y - 4 / maps.Length));
+                    b = false;
+                }
+                if (maps[i].hitBox.Intersects(perso.getPersoHitBox()) && perso.getPersoPos().Y > limiteSaut)
                 {
                     // Si le personnage touche la map ET que sa position est plus basse que sa limite de saut c'est qu'il a touché le sol ALORS
                     // Il marche
                     // Il peut à nouveau sauter
                     perso.walking = true;
                     perso.canJump = true;
-                }
-
-                if (perso.isJumpingOrNot())
-                {
-                    // Si le perso est en train de sauter
-                    // Il monte
-                    perso.movePerso(new Vector2(perso.getPersoPos().X, perso.getPersoPos().Y -  4 / maps.Length));
-                }
-
-                if (!perso.walking && !perso.isJumpingOrNot())
-                {
-                    // Si le perso ne marche pas et ne saute pas non plus 
-                    // il tombe
-                    perso.movePerso(new Vector2(perso.getPersoPos().X, perso.getPersoPos().Y +  4 / maps.Length));
+                    b = false;
+                    break;
                 }
 
                 if (perso.getPersoPos().Y <= limiteSaut || maps[i].hitBox.Intersects(perso.getPersoHitBox()))
@@ -124,6 +128,12 @@ namespace Economy
                 }
 
                 
+            }
+
+            if (b)
+            {
+                perso.movePerso(new Vector2(perso.getPersoPos().X, perso.getPersoPos().Y + 5));
+                b = false;
             }
 
             uInput();
@@ -138,21 +148,21 @@ namespace Economy
             spawn(personnage, perso.getPersoPos(), 0, 1f); //On affiche le personnage
 
             spawn(maps[0].texture, new Vector2(150, 400), 0, 1f);                                                   // On affiche chaque carré de map
-            maps[0].hitBox = new Rectangle(150, 400, 64, 64);       // Et on définit leur hitbox
+            maps[0].hitBox = new Rectangle(150, 400, 64, 1);       // Et on définit leur hitbox
             spawn(maps[1].texture, new Vector2(300, 400), 0, 1f);                                                   // On affiche chaque carré de map
-            maps[1].hitBox = new Rectangle(300, 400, 64, 64);       // Et on définit leur hitbox
+            maps[1].hitBox = new Rectangle(300, 400, 64, 1);       // Et on définit leur hitbox
 
 
             if (perso.getSens() == 1) //Si le perso est dans le sens 1
             {
                 personnage = perso.perso;
-                perso.createPersoHitBox(new Rectangle((int)perso.getPersoPos().X, (int)perso.getPersoPos().Y, 64, 64));
+                perso.createPersoHitBox(new Rectangle((int)perso.getPersoPos().X + 24, (int)perso.getPersoPos().Y + 53, 10, 10));
                 perso.moveAttack(new Vector2(perso.getPersoPos().X + 50, perso.getPersoPos().Y)); //et on positionne l'endroit o� appara�tra son attaque si il attaque
             }
             else  //Si il est dans le sens 0
             {
                 personnage = perso.perso2;
-                perso.createPersoHitBox(new Rectangle((int)perso.getPersoPos().X, (int)perso.getPersoPos().Y, 64, 64));
+                perso.createPersoHitBox(new Rectangle((int)perso.getPersoPos().X + 24, (int)perso.getPersoPos().Y + 53, 10, 10));
                 perso.moveAttack(new Vector2(perso.getPersoPos().X - 50, perso.getPersoPos().Y)); //idem
             }
             
