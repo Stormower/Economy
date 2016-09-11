@@ -15,7 +15,7 @@ namespace Mob
     public class mob
     {
         public Texture2D mobText;
-        Vector2 mobPos = new Vector2(500, 250);
+        Vector2 mobPos;
         bool mobInLife = true;
         Rectangle mobHitBox = new Rectangle();
        

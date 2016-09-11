@@ -17,12 +17,13 @@ namespace Personnage
         public Texture2D perso;
         public Texture2D perso2;
         public Texture2D attack;
-        Vector2 persoPos = new Vector2(250, 250);
+        Vector2 persoPos = new Vector2(150, 180);
         Vector2 attackPos;
         bool attackOrNot = false;
         int sensPerso;
         int pv;
         Rectangle attackHitBox = new Rectangle();
+        Rectangle persoHitBox = new Rectangle();
         bool jumping = false;
         public bool walking = false;
         public bool canJump = true;
@@ -83,15 +84,25 @@ namespace Personnage
         {
             attackOrNot = attOrNot;
         }
-//Définir la hitbox de l'attaque
+//Définir la hitbox du perso
         public void createAttackHitBox(Rectangle rectangle)
         {
             attackHitBox = rectangle;
         }
-//Récupérer la hitbox de l'attaque
+//Récupérer la hitbox du perso
         public Rectangle getAttackHitBox()
         {
             return attackHitBox;
+        }
+        //Définir la hitbox de l'attaque
+        public void createPersoHitBox(Rectangle rectangle)
+        {
+            persoHitBox = rectangle;
+        }
+//Récupérer la hitbox de l'attaque
+        public Rectangle getPersoHitBox()
+        {
+            return persoHitBox;
         }  
 //Savoir si le perso saute
         public bool isJumpingOrNot()
