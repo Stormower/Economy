@@ -8,12 +8,6 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-using FarseerPhysics;
-using FarseerPhysics.Common;
-using FarseerPhysics.Controllers;
-using FarseerPhysics.Dynamics;
-using FarseerPhysics.Factories;
-using FarseerPhysics.Collision;
 using Personnage;
 using Mob;
 using Maps;
@@ -30,7 +24,6 @@ namespace Economy
         Texture2D personnage;
         //Rectangle mainFrame;
         KeyboardState oldState;
-        int angle = 0;
         MouseState oldSourisState;
         Perso perso = new Perso();
         mob[] Mob = new mob[2];
@@ -43,7 +36,6 @@ namespace Economy
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-
         }
 
         protected override void Initialize()
@@ -62,6 +54,7 @@ namespace Economy
             }
             Mob[0].moveMob(new Vector2(500, 250));
             Mob[1].moveMob(new Vector2(600, 250));
+            perso.movePerso(new Vector2(150, 180));
             base.Initialize();
         }
 
@@ -74,7 +67,7 @@ namespace Economy
             }
             perso.perso = Content.Load<Texture2D>("perso");
             perso.perso2 = Content.Load<Texture2D>("perso2");
-            personnage = perso.perso;        
+            personnage = perso.perso;
             perso.attack = Content.Load<Texture2D>("attack");
             for (int i = 0; i <= 1; i++)
             {
@@ -92,33 +85,6 @@ namespace Economy
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
-            uInput();
-            base.Update(gameTime);
-        }
-
-        protected override void Draw(GameTime gameTime)
-        {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            spriteBatch.Begin();
-
-            spawn(personnage, perso.getPersoPos(), angle, 1f); //On affiche le personnage
-            spawn(maps[0].texture, new Vector2(150, 400), 0, 1f);  
-            maps[0].hititBox = new Rectangle((int)perso.getPersoPos().X, (int)perso.getPersoPos().Y, 64, 64);
-
-
-            if (perso.getSens() == 1) //Si le perso est dans le sens 1
-            {
-                personnage = perso.perso;
-                perso.createPersoHitBox(new Rectangle((int)perso.getPersoPos().X, (int)perso.getPersoPos().Y, 64, 64));
-                perso.moveAttack(new Vector2(perso.getPersoPos().X + 50, perso.getPersoPos().Y)); //et on positionne l'endroit o� appara�tra son attaque si il attaque
-            }
-            else  //Si il est dans le sens 0
-            {
-                personnage = perso.perso2;
-                perso.createPersoHitBox(new Rectangle((int)perso.getPersoPos().X, (int)perso.getPersoPos().Y, 64, 64));
-                perso.moveAttack(new Vector2(perso.getPersoPos().X - 50, perso.getPersoPos().Y)); //idem
-            }
-
 
             for (int i = 0; i < maps.Length; i++)
             {
@@ -140,7 +106,8 @@ namespace Economy
 
                 if (!perso.walking && !perso.isJumpingOrNot())
                 {
-                    // Si le perso ne marche pas et ne saute pas non plus ALORS il tombe
+                    // Si le perso ne marche pas et ne saute pas non plus 
+                    // il tombe
                     perso.movePerso(new Vector2(perso.getPersoPos().X, perso.getPersoPos().Y + 4));
                 }
 
@@ -157,9 +124,34 @@ namespace Economy
                 }
             }
 
+            uInput();
+            base.Update(gameTime);
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin();
+
+            spawn(personnage, perso.getPersoPos(), 0, 1f); //On affiche le personnage
+
+            spawn(maps[0].texture, new Vector2(150, 400), 0, 1f);                                                   // On affiche chaque carré de map
+            maps[0].hititBox = new Rectangle((int)perso.getPersoPos().X, (int)perso.getPersoPos().Y, 64, 64);       // Et on définit leur hitbox
 
 
-
+            if (perso.getSens() == 1) //Si le perso est dans le sens 1
+            {
+                personnage = perso.perso;
+                perso.createPersoHitBox(new Rectangle((int)perso.getPersoPos().X, (int)perso.getPersoPos().Y, 64, 64));
+                perso.moveAttack(new Vector2(perso.getPersoPos().X + 50, perso.getPersoPos().Y)); //et on positionne l'endroit o� appara�tra son attaque si il attaque
+            }
+            else  //Si il est dans le sens 0
+            {
+                personnage = perso.perso2;
+                perso.createPersoHitBox(new Rectangle((int)perso.getPersoPos().X, (int)perso.getPersoPos().Y, 64, 64));
+                perso.moveAttack(new Vector2(perso.getPersoPos().X - 50, perso.getPersoPos().Y)); //idem
+            }
+            
             for (int i = 0; i <= 1; i++)
             {
                 if (Mob[i].mobInLifeOrNot()) // Si le mob est en vie
@@ -203,9 +195,9 @@ namespace Economy
             for (int i = 0; i < Mob.Length; i++)
             {
                 if (!Mob[i].mobInLifeOrNot()) // Si le Mob est mort
-                {
+                {                                                                 /////////////////////
                     Mob[i].moveMob(new Vector2(700, 250)); //Changer sa position //////RES LE MOB//////
-                    Mob[i].killMob(true);  //Le réssusiter
+                    Mob[i].killMob(true);  //Le réssusiter                       //////////////////////
                 }
             }
         }
@@ -214,25 +206,16 @@ namespace Economy
         {
             KeyboardState newState = Keyboard.GetState();
             MouseState sourisState = Mouse.GetState();
-            /* if (newState.IsKeyDown(Keys.Z))
-             {
-                 persoPos.Y--;
-             }
-             if (newState.IsKeyDown(Keys.S))
-             {
-                 persoPos.Y++;
-             }*/
+
             if (newState.IsKeyDown(Keys.Q))
             {
                 perso.movePerso(new Vector2(perso.getPersoPos().X - 3, perso.getPersoPos().Y));
                 perso.changeSens(0);
-                angle = 0;
             }
             else if (newState.IsKeyDown(Keys.D))
             {
                 perso.movePerso(new Vector2(perso.getPersoPos().X + 3, perso.getPersoPos().Y));
                 perso.changeSens(1);
-                angle = 0;
             }
 
             if (newState.IsKeyDown(Keys.Z) && !oldState.IsKeyDown(Keys.Z) && perso.canJump == true)
