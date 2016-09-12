@@ -27,7 +27,7 @@ namespace Economy
         MouseState oldSourisState;
         Perso perso = new Perso();
         mob[] Mob = new mob[2];
-        Map[] maps = new Map[2];
+        Map[] maps = new Map[5];
         bool b = true;
 
    //     int sol = 250;
@@ -89,12 +89,30 @@ namespace Economy
 
             for (int i = 0; i < maps.Length; i++)
             {
+
+                if (maps[i].hitBox.Intersects(perso.getPersoHitBox()) && perso.getPersoPos().Y > limiteSaut)
+                {
+                    // Si le personnage touche la map ET que sa position est plus basse que sa limite de saut c'est qu'il a touché le sol ALORS
+                    // Il marche
+                    // Il peut à nouveau sauter
+                    perso.walking = true;
+                    perso.canJump = true;
+                    b = false;
+                    break;
+                }
+
                 if (!maps[i].hitBox.Intersects(perso.getPersoHitBox()))
                 {
                     // Si le perso ne touche pas la map, on considère qu'il ne marche pas
                     perso.walking = false;
                 }
 
+                if (perso.getPersoPos().Y <= limiteSaut || maps[i].hitBox.Intersects(perso.getPersoHitBox()))
+                {
+                    // Si le perso atteint pu dépasse sa limite de saut OU si il touche ka map, il ne saute plus.
+                    perso.jump(false);
+                }
+            }
 
 
                 if (!perso.walking && !perso.isJumpingOrNot())
@@ -110,25 +128,12 @@ namespace Economy
                     perso.movePerso(new Vector2(perso.getPersoPos().X, perso.getPersoPos().Y - 4 / maps.Length));
                     b = false;
                 }
-                if (maps[i].hitBox.Intersects(perso.getPersoHitBox()) && perso.getPersoPos().Y > limiteSaut)
-                {
-                    // Si le personnage touche la map ET que sa position est plus basse que sa limite de saut c'est qu'il a touché le sol ALORS
-                    // Il marche
-                    // Il peut à nouveau sauter
-                    perso.walking = true;
-                    perso.canJump = true;
-                    b = false;
-                    break;
-                }
-
-                if (perso.getPersoPos().Y <= limiteSaut || maps[i].hitBox.Intersects(perso.getPersoHitBox()))
-                {
-                    // Si le perso atteint pu dépasse sa limite de saut OU si il touche ka map, il ne saute plus.
-                    perso.jump(false);
-                }
+               
 
                 
-            }
+
+                
+            
 
             if (b)
             {
@@ -148,9 +153,17 @@ namespace Economy
             spawn(personnage, perso.getPersoPos(), 0, 1f); //On affiche le personnage
 
             spawn(maps[0].texture, new Vector2(150, 400), 0, 1f);                                                   // On affiche chaque carré de map
-            maps[0].hitBox = new Rectangle(150, 400, 64, 1);       // Et on définit leur hitbox
-            spawn(maps[1].texture, new Vector2(300, 400), 0, 1f);                                                   // On affiche chaque carré de map
-            maps[1].hitBox = new Rectangle(300, 400, 64, 1);       // Et on définit leur hitbox
+            maps[0].hitBox = new Rectangle(150, 400, 64, 1);                                                        // Et on définit leur hitbox
+            spawn(maps[1].texture, new Vector2(300, 400), 0, 1f);                                                  
+            maps[1].hitBox = new Rectangle(300, 400, 64, 1);      
+            spawn(maps[2].texture, new Vector2(600, 400), 0, 1f);                                                 
+            maps[2].hitBox = new Rectangle(600, 400, 64, 1);
+            spawn(maps[3].texture, new Vector2(485, 200), 0, 1f);
+            maps[3].hitBox = new Rectangle(485, 200, 64, 1);
+            spawn(maps[4].texture, new Vector2(750, 250), 0, 1f);
+            maps[4].hitBox = new Rectangle(750, 250, 64, 1);
+            spawn(maps[3].texture, new Vector2(300, 200), 0, 1f);
+            maps[3].hitBox = new Rectangle(300, 200, 64, 1);
 
 
             if (perso.getSens() == 1) //Si le perso est dans le sens 1
@@ -238,6 +251,13 @@ namespace Economy
                 perso.canJump = false;
                 perso.walking = false;
                 limiteSaut = perso.getPersoPos().Y - 100;
+            }
+
+            if (newState.IsKeyDown(Keys.Back) && !oldState.IsKeyDown(Keys.Back))
+            {
+                perso.movePerso(new Vector2(150, 180));
+                Mob[0].moveMob(new Vector2(500, 250));
+                Mob[1].moveMob(new Vector2(600, 250));
             }
 
             oldState = newState;
